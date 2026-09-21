@@ -1,13 +1,13 @@
 {
-  "name": "Хау мач",
-  "short_name": "Хау мач",
-  "description": "Наведи камеру на ценник за границей — увидишь цену в рублях. Пятнадцать валют, работает без интернета.",
+  "name": "Хау мач?",
+  "short_name": "Хау мач?",
+  "description": "Хау мач? — цены в рублях по фото. 15 валют, свой курс обмена, работает без интернета.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#F2F3F7",
-  "theme_color": "#0A8FA8",
+  "theme_color": "#1877F2",
   "lang": "ru",
   "categories": [
     "travel",

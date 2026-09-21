@@ -1,4 +1,4 @@
-/* Курс на месте — офлайн-кэш.
+/* Хау мач — офлайн-кэш.
    Внешних адресов у приложения нет вообще: движок распознавания, языковая
    модель и шрифты либо лежат рядом, либо системные. Поэтому кэшируем только
    свой origin. Тяжёлые файлы движка (~11 МБ) не кладём в кэш при установке —
@@ -6,11 +6,11 @@
    Курсы валют не кэшируем никогда: они всегда идут в сеть, а без неё
    страница берёт последнее сохранённое значение из localStorage. */
 
-var VERSION = "kurs-v12";
+var VERSION = "kurs-v18";
 var SHELL = VERSION + "-shell";
 var HEAVY = VERSION + "-ocr";
 
-var SHELL_FILES = ["./","index.html","manifest.webmanifest","icon-192.png","icon-512.png"];
+var SHELL_FILES = ["./","index.html","manifest.webmanifest","icon-192.png","icon-512.png","fonts/pt-sans-caption-700.woff2"];
 var NEVER = ["open.er-api.com","www.cbr-xml-daily.ru","cbr-xml-daily.ru"];
 
 self.addEventListener("install", function(e){
