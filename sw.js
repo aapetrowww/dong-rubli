@@ -5,7 +5,7 @@
    Курс валют не кэшируем никогда: он всегда идёт в сеть, а при её отсутствии
    страница берёт последнее сохранённое значение из localStorage. */
 
-var VERSION = "dongrub-v6";
+var VERSION = "dongrub-v7";
 var SHELL = VERSION + "-shell";
 var RUNTIME = VERSION + "-runtime";
 
