@@ -16,7 +16,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,700&family=Golos+Text:wght@600..700&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Literata:opsz,wght@7..72,600..700&display=swap">
 <style>
   :root{
     --paper:#F1F4F0; --surface:#FFFFFF; --surface-2:#E7ECE6;
@@ -27,7 +27,9 @@
     --shadow:0 1px 2px rgba(18,25,26,.05), 0 10px 28px -16px rgba(18,25,26,.26);
     --ui:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
     --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-    --display:"Bodoni Moda",Georgia,"Times New Roman",serif;
+    /* шрифт рублёвой суммы — переключается внизу страницы */
+    --display:"Literata",Georgia,"Times New Roman",serif;
+    --display-weight:700;
     color-scheme:light;
   }
   @media (prefers-color-scheme: dark){
@@ -52,6 +54,9 @@
   }
 
   *{box-sizing:border-box}
+  /* manipulation отключает зум по двойному тапу и убирает задержку клика,
+     оставляя обычную прокрутку и щипок */
+  html{touch-action:manipulation}
   html,body{margin:0;padding:0}
   html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:var(--paper)}
   body{
@@ -87,12 +92,27 @@
   .conv{padding:20px 20px 18px;display:flex;flex-direction:column;gap:2px}
   .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:600}
   .from{display:flex;align-items:baseline;gap:8px;font-family:var(--mono);font-weight:600;font-size:clamp(26px,8vw,34px);font-variant-numeric:tabular-nums;overflow:hidden}
-  .from .num{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .from .num{
+    flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+    font:inherit;color:inherit;letter-spacing:inherit;
+    border:0;background:transparent;padding:2px 6px;margin-left:-6px;
+    border-radius:8px;appearance:none;-webkit-appearance:none;
+    caret-color:var(--accent);
+    transition:background .15s ease;
+  }
+  .from .num:focus{outline:none;background:var(--surface-2)}
+  .from .num::selection{background:var(--accent);color:var(--on-accent)}
   .cur{font-family:var(--ui);font-weight:500;font-size:.62em;color:var(--muted)}
   .rule{height:1px;background:var(--line);margin:14px 0 12px}
   .to{display:flex;align-items:baseline;gap:9px}
-  .to .num{font-family:var(--display);font-weight:700;font-size:clamp(46px,16vw,66px);line-height:1;letter-spacing:-.01em;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .to .cur{font-size:26px;color:var(--ink-2)}
+  .to{align-items:baseline}
+  .to .num{
+    font-family:var(--display);font-weight:var(--display-weight);
+    font-size:clamp(42px,14.5vw,60px);line-height:1.05;letter-spacing:-.015em;
+    font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  }
+  /* знак валюты той же гарнитурой, что и число — иначе они спорят друг с другом */
+  .to .cur{font-family:var(--display);font-weight:var(--display-weight);font-size:clamp(19px,6vw,25px);color:var(--ink-2)}
   .basis{margin-top:12px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
   .basis b{font-weight:600;color:var(--ink-2);font-variant-numeric:tabular-nums}
 
@@ -204,7 +224,11 @@
 
   <div class="card conv">
     <div class="lbl" id="fromLbl">Цена в донгах</div>
-    <div class="from"><span class="num" id="fromNum">0</span><span class="cur" id="fromCur">₫</span></div>
+    <div class="from">
+      <input class="num" id="fromNum" type="text" inputmode="numeric" autocomplete="off"
+             autocorrect="off" spellcheck="false" enterkeyhint="done" aria-label="Сумма">
+      <span class="cur" id="fromCur">₫</span>
+    </div>
     <div class="rule"></div>
     <div class="lbl" id="toLbl">Это в рублях</div>
     <div class="to"><span class="num" id="toNum">0</span><span class="cur" id="toCur">₽</span></div>
@@ -277,7 +301,13 @@
 
   <footer>
     <div id="footText"></div>
-    <div style="margin-top:6px"><button type="button" id="dbgToggle">показать, что видит камера</button></div>
+    <div id="fontPick" style="margin-top:10px">Шрифт суммы: </div>
+    <div id="verLine" style="margin-top:8px;font-variant-numeric:tabular-nums"></div>
+    <div style="margin-top:6px">
+      <button type="button" id="updBtn">проверить обновление</button>
+      &nbsp;·&nbsp;
+      <button type="button" id="dbgToggle">показать, что видит камера</button>
+    </div>
   </footer>
 </div>
 
@@ -307,9 +337,13 @@
 "use strict";
 
 /* ===================== настройки ===================== */
+var APP_VERSION = "6";              // ← поднимать при каждой правке, видно внизу страницы
+var APP_DATE = "21.09.2026";
 var FALLBACK_RATE = 308.4;          // донгов за рубль, если сеть недоступна и кэша нет
 var FALLBACK_DATE = "20.09.2026";
 var LS = "dongrub.v2.";
+// для строки в рамке — только цифры и разделители; пробел обязателен (разряды)
+var WHITELIST = "0123456789., ktrKTR";
 
 var NOTES = [
   {v:500000,c:"#5FA79B",n:"полимер, бирюзово-синяя"},
@@ -460,15 +494,18 @@ var $ = function(id){ return document.getElementById(id); };
 
 function render(){
   var raw = state.digits || "0", n = Number(raw) || 0;
+  var fld = $("fromNum"), focused = document.activeElement === fld;
+  // не трогаем поле, пока в нём стоит курсор и цифры уже совпадают — иначе каретка прыгает
+  if(fld.value.replace(/\D/g,"") !== state.digits){
+    fld.value = state.digits ? groupVND(state.digits) : (focused ? "" : "0");
+  }
   if(state.mode === "vnd"){
     $("fromLbl").textContent="Цена в донгах"; $("fromCur").textContent="₫";
     $("toLbl").textContent="Это в рублях"; $("toCur").textContent="₽";
-    $("fromNum").textContent=groupVND(raw);
     $("toNum").textContent=fmtRUB(n/rate());
   }else{
     $("fromLbl").textContent="Сумма в рублях"; $("fromCur").textContent="₽";
     $("toLbl").textContent="Это в донгах"; $("toCur").textContent="₫";
-    $("fromNum").textContent=groupVND(raw);
     $("toNum").textContent=groupVND(String(Math.round(n*rate())));
   }
   $("basis").innerHTML = "";
@@ -516,6 +553,45 @@ function press(k){
 [].forEach.call(document.querySelectorAll(".key"), function(btn){
   btn.addEventListener("click", function(){ press(btn.getAttribute("data-k")); });
 });
+
+/* ---- правка суммы прямо в поле ---- */
+var fromField = $("fromNum");
+
+function reformatKeepingCaret(el){
+  var start = el.selectionStart == null ? el.value.length : el.selectionStart;
+  var digitsBefore = el.value.slice(0, start).replace(/\D/g,"").length;
+  var digits = el.value.replace(/\D/g,"").replace(/^0+(?=\d)/,"").slice(0,12);
+  var text = digits ? groupVND(digits) : "";
+  el.value = text;
+  var pos = 0, seen = 0;
+  while(pos < text.length && seen < digitsBefore){
+    if(text.charCodeAt(pos) >= 48 && text.charCodeAt(pos) <= 57) seen++;
+    pos++;
+  }
+  try{ el.setSelectionRange(pos, pos); }catch(e){}
+  return digits;
+}
+
+fromField.addEventListener("focus", function(){
+  // тап по числу — сразу выделяем всё, чтобы перебить распознанное одним набором
+  setTimeout(function(){ try{ fromField.select(); }catch(e){} }, 0);
+});
+fromField.addEventListener("input", function(){
+  state.digits = reformatKeepingCaret(fromField);
+  render();
+  queueHistory();
+});
+fromField.addEventListener("blur", function(){
+  if(!state.digits) fromField.value = "0";
+});
+fromField.addEventListener("keydown", function(e){
+  if(e.key === "Enter"){ e.preventDefault(); fromField.blur(); }
+});
+
+function editValue(){
+  fromField.focus();
+  try{ fromField.select(); }catch(e){}
+}
 document.addEventListener("keydown", function(e){
   if(!$("overlay").hidden) return;
   var t=e.target; if(t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA")) return;
@@ -636,8 +712,7 @@ function getWorker(){
   }
   workerPromise = Tesseract.createWorker("eng", 1).then(function(w){
     return w.setParameters({
-      // пробел обязателен: во вьетнамских ценниках им разделяют разряды
-      tessedit_char_whitelist: "0123456789.,' ktrKTR",
+      tessedit_char_whitelist: WHITELIST,
       tessedit_pageseg_mode: "7",
       preserve_interword_spaces: "1",
       classify_bln_numeric_mode: "1"
@@ -646,8 +721,10 @@ function getWorker(){
   return workerPromise;
 }
 
-/* кроп по рамке + усиление контраста (Otsu) */
-function prepCanvas(source, sw, sh, box){
+/* кроп по рамке + усиление контраста (Otsu). binarize=false — только серый:
+   на снимках экрана и глянцевых ценниках порог иногда съедает тонкие цифры */
+function prepCanvas(source, sw, sh, box, binarize){
+  if(binarize === undefined) binarize = true;
   var cw = Math.max(1, Math.round(sw*box.w)), ch = Math.max(1, Math.round(sh*box.h));
   var sx = Math.round(sw*box.x), sy = Math.round(sh*box.y);
   var scale = Math.min(3, Math.max(1, 900/cw));
@@ -676,11 +753,14 @@ function prepCanvas(source, sw, sh, box){
     if(between > maxVar){ maxVar = between; thr = t; }
   }
   var invert = mean < 118; // светлый текст на тёмном (табло, вывеска)
-  for(i=0;i<p.length;i+=4){
-    var on = p[i] > thr;
-    if(invert) on = !on;
-    var val = on ? 255 : 0;
-    p[i]=p[i+1]=p[i+2]=val;
+  if(binarize){
+    for(i=0;i<p.length;i+=4){
+      var on = p[i] > thr;
+      if(invert) on = !on;
+      p[i]=p[i+1]=p[i+2] = on ? 255 : 0;
+    }
+  }else if(invert){
+    for(i=0;i<p.length;i+=4){ p[i]=p[i+1]=p[i+2] = 255 - p[i]; }
   }
   ctx.putImageData(img,0,0);
 
@@ -697,7 +777,7 @@ function prepCanvas(source, sw, sh, box){
 
 /* ===================== камера ===================== */
 var overlay=$("overlay"), video=$("video"), stream=null, track=null;
-var scanning=false, liveBest=null, frames=[], lastList=null, lastText="";
+var scanning=false, liveBest=null, frames=[], lastList=null, lastText="", emptyRun=0;
 var BOX = {x:0.07, y:0.36, w:0.86, h:0.20};   // совпадает с рамкой в CSS
 
 function showScan(html, isErr){
@@ -710,7 +790,7 @@ function openCamera(){
   overlay.hidden=false; $("ovMsg").hidden=true; $("reticle").hidden=false;
   $("ovHint").hidden=false; video.hidden=false; $("live").hidden=true;
   $("dbg").hidden=!state.debug;
-  liveBest=null; frames=[]; lastList=null; $("shutter").disabled=true;
+  liveBest=null; frames=[]; lastList=null; emptyRun=0; $("shutter").disabled=true;
   $("ovHint").textContent="Наведите рамку на цену";
 
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
@@ -764,8 +844,12 @@ async function loop(){
         var conf = (res && res.data && typeof res.data.confidence === "number") ? res.data.confidence : 0;
         lastText = text;
         if(state.debug) $("dbg").textContent = "OCR(" + Math.round(conf) + "): " + text.replace(/\n/g," ⏎ ");
-        // мутный кадр даёт красивое, но выдуманное число — такие не считаем
-        handleLive(conf >= 55 ? parsePrices(text) : []);
+        var list = parsePrices(text);
+        // Само по себе «38 490 000» — уже сильный признак цены: разряды так просто
+        // из шума не сложатся. Такому верим при любой уверенности движка.
+        // Отсечку применяем только к слабым догадкам — голому числу и «меню ×1000».
+        var strong = list.length && list[0].w >= 6;
+        handleLive((strong || conf >= 45) ? list : []);
       }
     }catch(e){
       if(!scanning) break;
@@ -785,7 +869,7 @@ var NEED_TAKE = 3;   // столько, чтобы считать подтвер
 function handleLive(list){
   frames.push(list.length ? list[0].v : 0);
   if(frames.length > WINDOW) frames.shift();
-  if(list.length) lastList = list;
+  if(list.length){ lastList = list; emptyRun = 0; } else { emptyRun++; }
 
   var counts = {}, best = 0, bestN = 0;
   frames.forEach(function(v){ if(v) counts[v] = (counts[v]||0) + 1; });
@@ -798,7 +882,10 @@ function handleLive(list){
     $("reticle").classList.remove("hit");
     $("shutter").disabled = true;
     $("live").hidden = true;
-    $("ovHint").textContent = "Наведите рамку на цену";
+    // молчание двусмысленно: или ещё не навели, или вообще ничего не видно
+    $("ovHint").textContent = emptyRun > 8
+      ? "Цифр не видно — подойдите ближе или добавьте света"
+      : "Наведите рамку на цену";
     return;
   }
 
@@ -837,15 +924,28 @@ function readPhoto(file){
   var img = new Image();
   img.onload = function(){
     getWorker().then(function(w){
-      // на снимке рамки нет — читаем весь кадр, режим «разреженный текст»
-      var c = prepCanvas(img, img.naturalWidth, img.naturalHeight, {x:0,y:0,w:1,h:1});
-      return w.setParameters({tessedit_pageseg_mode:"11"}).then(function(){ return w.recognize(c); })
-        .then(function(res){
-          return w.setParameters({tessedit_pageseg_mode:"7"}).then(function(){ return res; });
-        });
-    }).then(function(res){
+      // На снимке рамки нет — читаем весь кадр в режиме «разреженный текст»
+      // и БЕЗ списка допустимых символов: на целой странице языковая модель
+      // сегментирует заметно лучше, а лишние буквы разбор всё равно отбросит.
+      var texts = [];
+      return w.setParameters({tessedit_pageseg_mode:"11", tessedit_char_whitelist:""})
+        .then(function(){
+          return w.recognize(prepCanvas(img, img.naturalWidth, img.naturalHeight, {x:0,y:0,w:1,h:1}, true));
+        })
+        .then(function(r1){
+          texts.push((r1 && r1.data && r1.data.text) ? r1.data.text : "");
+          if(parsePrices(texts[0]).length) return null;
+          // ничего не нашлось — пробуем без бинаризации, серым
+          return w.recognize(prepCanvas(img, img.naturalWidth, img.naturalHeight, {x:0,y:0,w:1,h:1}, false));
+        })
+        .then(function(r2){
+          if(r2 && r2.data && r2.data.text) texts.push(r2.data.text);
+          return w.setParameters({tessedit_pageseg_mode:"7", tessedit_char_whitelist:WHITELIST});
+        })
+        .then(function(){ return texts.join("\n"); });
+    }).then(function(text){
       URL.revokeObjectURL(url);
-      var text = (res && res.data && res.data.text) ? res.data.text.trim() : "";
+      text = (text || "").trim();
       lastText = text;
       var list = parsePrices(text);
       if(!list.length){
@@ -872,18 +972,24 @@ function applyValue(v, all, how, raw){
   var alts = (all||[]).filter(function(x){ return Math.round(x)!==Math.round(v); }).slice(0,4);
   var html = "<div class='head'>Прочитал " + groupVND(String(v)) + " ₫" +
              (how ? " <span style='font-weight:400;color:var(--muted)'>· " + esc(how) + "</span>" : "") + "</div>";
-  if(alts.length) html += "<div>Другие цены в кадре:</div><div class='alts' id='altBox'></div>";
+  html += "<div class='alts' id='altBox'></div>";
+  if(alts.length) html += "<div style='font-size:12px;color:var(--muted)'>Не та цена — возьмите другую или поправьте вручную.</div>";
   if(state.debug && raw) html += "<div style='font-family:var(--mono);font-size:11px;opacity:.8'>OCR: "+esc(raw.replace(/\n/g," / ")).slice(0,300)+"</div>";
   showScan(html, false);
-  if(alts.length){
-    var box=$("altBox");
-    alts.forEach(function(x){
-      var b=document.createElement("button"); b.type="button"; b.className="chip";
-      b.textContent=groupVND(String(Math.round(x)))+" ₫";
-      b.addEventListener("click", function(){ state.mode="vnd"; state.digits=String(Math.round(x)); render(); pushHistory(); });
-      box.appendChild(b);
-    });
-  }
+
+  var box=$("altBox");
+  alts.forEach(function(x){
+    var b=document.createElement("button"); b.type="button"; b.className="chip";
+    b.textContent=groupVND(String(Math.round(x)))+" ₫";
+    b.addEventListener("click", function(){ state.mode="vnd"; state.digits=String(Math.round(x)); render(); pushHistory(); });
+    box.appendChild(b);
+  });
+  var fix=document.createElement("button");
+  fix.type="button"; fix.className="chip";
+  fix.style.borderStyle="dashed";
+  fix.textContent="Поправить";
+  fix.addEventListener("click", editValue);
+  box.appendChild(fix);
 }
 
 /* ===================== отладка ===================== */
@@ -897,6 +1003,54 @@ $("dbgToggle").addEventListener("click", function(){
 if(state.customRate) $("rateInput").value = fmtRate(state.customRate);
 $("dbgToggle").textContent = state.debug ? "скрыть, что видит камера" : "показать, что видит камера";
 $("footText").textContent = "Курс обновляется из сети, когда есть интернет. Свой курс и история живут в этом браузере.";
+$("verLine").textContent = "Версия " + APP_VERSION + " от " + APP_DATE;
+
+/* ---- выбор шрифта суммы ---- */
+var FONTS = [
+  {id:"literata", name:"Literata", stack:'"Literata",Georgia,"Times New Roman",serif', w:700},
+  {id:"golos",    name:"Golos",    stack:'"Golos Text",-apple-system,"Segoe UI",system-ui,sans-serif', w:700},
+  {id:"bodoni",   name:"Bodoni",   stack:'"Bodoni Moda",Georgia,"Times New Roman",serif', w:700}
+];
+function applyFont(id){
+  var f = FONTS.filter(function(x){ return x.id===id; })[0] || FONTS[0];
+  document.documentElement.style.setProperty("--display", f.stack);
+  document.documentElement.style.setProperty("--display-weight", String(f.w));
+  set("font", f.id);
+  [].forEach.call(document.querySelectorAll("#fontPick button"), function(b){
+    var on = b.getAttribute("data-f") === f.id;
+    b.style.textDecoration = on ? "none" : "underline";
+    b.style.color = on ? "var(--ink)" : "var(--muted)";
+    b.style.fontWeight = on ? "600" : "400";
+  });
+}
+FONTS.forEach(function(f, i){
+  if(i) $("fontPick").appendChild(document.createTextNode(" · "));
+  var b=document.createElement("button");
+  b.type="button"; b.setAttribute("data-f", f.id); b.textContent=f.name;
+  b.style.fontFamily = f.stack;
+  b.addEventListener("click", function(){ applyFont(f.id); });
+  $("fontPick").appendChild(b);
+});
+applyFont(String(get("font","literata")));
+
+/* Сбрасываем только кэш самой страницы. Движок распознавания и языковая модель
+   лежат в отдельном кэше и остаются на месте — иначе их пришлось бы качать заново. */
+$("updBtn").addEventListener("click", function(){
+  var btn = $("updBtn");
+  btn.textContent = "проверяю…"; btn.disabled = true;
+  var jobs = [];
+  if("serviceWorker" in navigator){
+    jobs.push(navigator.serviceWorker.getRegistration().then(function(r){ return r && r.update(); }).catch(function(){}));
+  }
+  if(window.caches){
+    jobs.push(caches.keys().then(function(keys){
+      return Promise.all(keys.filter(function(k){ return /-shell$/.test(k); }).map(function(k){ return caches.delete(k); }));
+    }).catch(function(){}));
+  }
+  Promise.all(jobs).then(function(){
+    setTimeout(function(){ location.reload(); }, 400);
+  });
+});
 render(); renderHistory(); fetchRate(false);
 
 window.addEventListener("online", function(){ fetchRate(true); });
