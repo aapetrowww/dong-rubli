@@ -6,7 +6,7 @@
    Курсы валют не кэшируем никогда: они всегда идут в сеть, а без неё
    страница берёт последнее сохранённое значение из localStorage. */
 
-var VERSION = "kurs-v11";
+var VERSION = "kurs-v12";
 var SHELL = VERSION + "-shell";
 var HEAVY = VERSION + "-ocr";
 

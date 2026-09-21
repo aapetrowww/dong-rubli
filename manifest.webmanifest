@@ -1,7 +1,7 @@
 {
-  "name": "Курс на месте",
-  "short_name": "Курс",
-  "description": "Наводишь камеру на ценник — видишь цену в рублях. Донг, бат, лира, юань, дирхам, лари и другие.",
+  "name": "Хау мач",
+  "short_name": "Хау мач",
+  "description": "Наведи камеру на ценник за границей — увидишь цену в рублях. Пятнадцать валют, работает без интернета.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
@@ -9,10 +9,29 @@
   "background_color": "#F2F3F7",
   "theme_color": "#0A8FA8",
   "lang": "ru",
-  "categories": ["travel", "finance", "utilities"],
+  "categories": [
+    "travel",
+    "finance",
+    "utilities"
+  ],
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }
